@@ -11,7 +11,7 @@ spl_autoload_register();
 
 class ParserVideo
 {
-    const CHECK_URL_VALID = "/(youku\.com|tudou\.com|ku6\.com|56\.com|letv\.com|video\.sina\.com\.cn|(my\.)?tv\.sohu\.com|v\.qq\.com|vod\.kankan\.com|mtime\.com|pps\.tv|pptv\.com|iqiyi\.com|tv189\.com|hunantv\.com)/";
+    const CHECK_URL_VALID = "/(youku\.com|tudou\.com|ku6\.com|56\.com|letv\.com|video\.sina\.com\.cn|(my\.)?tv\.sohu\.com|v\.qq\.com|vod\.kankan\.com|mtime\.com|pps\.tv|pptv\.com|iqiyi\.com|tv189\.com|hunantv\.com|(bilibili\.com)|(b23\.tv))/";
 
     /**
      * parse 
@@ -72,6 +72,10 @@ class ParserVideo
                 break;
             case  "hunantv.com":
                 $data = self::_parseHunantv($url);
+                break;
+            case 'bilibili.com':
+            case 'b23.tv':
+                $data = self::_parseBilibili($url);
                 break;
             default:
                 $data = false;
@@ -228,7 +232,16 @@ class ParserVideo
     static private function _parseHunantv($url){
         $data = Hunantv::parse($url);
         return $data;
-    }    
+    }
+    /**
+     * [_parseBilibili 解析哔哩哔哩视频]
+     * @param  [type] $url [description]
+     * @return [type]      [description]
+     */
+    static private function _parseBilibili($url){
+        $data = Bilibili::parse($url);
+        return $data;
+    }
     /**
      * [getFlvcdUrl 通过flvcd来解析视频地址]
      * @param  [type] $url [description]
