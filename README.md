@@ -4,7 +4,7 @@
 
 ## 版本信息
 
-当前版本：**v.0.0.7**（2026-10-11）
+当前版本：**v.0.0.8**（2026-10-11）
 
 ## 功能
 
@@ -62,10 +62,12 @@ GET /api/m1907?url=<视频地址或片名>&ep=<集数>
 | M1907 im1907.top / m1907.top / hi1907.top / z1.m1907.cn | 可用 | 云加速接口 AES-GCM 解密取源；任意直链 m3u8/mp4 直接播放 |
 | 腾讯 v.qq.com / v.qq.net | 部分可用 | 旧接口已失效时自动回退 M1907 云加速（片名关键词搜索取源） |
 | 爱奇艺 iqiyi.com / qiyi.com | 部分可用 | 同上，自动回退 M1907 云加速 |
-| 优酷 youku.com / tudou.com | 部分可用 | 同上，可回退 M1907 云加速 |
+| 优酷 youku.com | 部分可用 | 同上，可回退 M1907 云加速 |
 | 搜狐视频 tv.sohu.com / m.tv.sohu.com / my.tv.sohu.com | 可用 | 官方 v4 接口，匿名可解析，多清晰度 m3u8 |
 | 芒果TV mgtv.com / hunantv.com | 可用 | 官方接口链路，免费档 480P/576P/720P 可播 |
-| 乐视 / 56 / 酷6 / 新浪 / 迅雷看看 / 时光网 / PPS / PPTV / tv189 | 已失效 | 2013 年旧接口已关闭，且受平台风控限制，暂无法解析 |
+| 56.com | 保留 | 官方 `vxml.56.com` 接口仍可响应，解析器保留 |
+| PPTV pptv.com | 保留 | 站点仍有内容，解析器保留；失败自动回退 M1907 |
+| 乐视 / 土豆 / 酷6 / 新浪 / 迅雷看看 / 时光网 / PPS / tv189 | 已移除 | 站点关停或平台萎缩，解析器文件已删除，链接统一走 M1907 / flvcd 兜底 |
 
 > 说明：优酷（阿里云盾）、爱奇艺（dash 签名）等官方独立接口匿名解析受限，短网址/移动端链接因 JS 渲染、服务端风控可能导致标题提取失败。
 > M1907 云加速对官方站点支持：官方 URL 直接解析失败时，自动抓取页面提取片名并按关键词搜索取源；对无法直接改名/无法抓取的链接，可在 URL 后追加 `&t=片名`、`&name=片名` 或 `&title=片名` 强制按片名搜索。
@@ -81,6 +83,14 @@ GET /api/m1907?url=<视频地址或片名>&ep=<集数>
 - `eps` 全部清晰度/集数列表（`[{name,url}]`，M1907）
 
 ## 更新日志
+
+### v.0.0.8 (2026-10-11)
+
+- 移除：删除 core 下 10 个失效解析器 `kankan / letv / pps / tv189 / ifeng / youku_2013 / letv.class_2013 / tudou / ku6 / sina`
+- 清理：`parserVideo.class.php` 同步移除上述站点的路由分支与 `_parseXxx` 方法，并从 `CHECK_URL_VALID` 白名单删除对应域名（含失效的 `mtime.com` 路由缺口）
+- 回归：删除后 `tudou / kankan / letv / ku6 / mtime` 等链接不再触发 Fatal，统一安全回退 M1907/flvcd
+- 修复：`core/qq.class.php` 补齐 `$durations[1]`/`$vids[1]` 的 `isset` 判断，消除旧接口异常时的 PHP Warning 污染
+- 保留：`bilibili / sohu / hunantv / m1907 / 56 / pptv / qq / iqiyi / youku` 解析器
 
 ### v.0.0.7 (2026-10-11)
 

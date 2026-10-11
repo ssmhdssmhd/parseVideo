@@ -17,8 +17,8 @@ class Qq {
             preg_match('/duration:"([^"]+)"/s', $html, $durations);
             preg_match('/vid:"([^"]+)"/s', $html, $vids);
             $title = (!empty($titles[1]))?$titles[1]:'';
-            $duration = $durations[1];
-            $vid = $vids[1];
+            $duration = (!empty($durations[1]))?$durations[1]:'';
+            $vid = (!empty($vids[1]))?$vids[1]:'';
         }   
         if($vid){
             $data = self::getVideoUrl($vid);
