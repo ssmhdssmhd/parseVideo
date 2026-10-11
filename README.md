@@ -4,7 +4,7 @@
 
 ## 版本信息
 
-当前版本：**v.0.0.4**（2026-10-11）
+当前版本：**v.0.0.5**（2026-10-11）
 
 ## 功能
 
@@ -55,6 +55,18 @@ php getVideo.php "https://www.bilibili.com/video/BV1GJ411x7h7"
 - `eps` 全部清晰度/集数列表（`[{name,url}]`，M1907）
 
 ## 更新日志
+
+### v.0.0.5 (2026-10-11)
+
+- 修复：`cleanTitle()` 调用 `mb_strlen()` 在未安装 mbstring 扩展的环境下致命错误（Fatal），改为 `preg_match_all('/./u')` 计数，不依赖 mbstring
+- 优化：片名清洗按 CN 站点标题约定「片名-类型-描述-站点」取首个分隔符前主体（如 `狂飙-电视剧-全集高清正版视频在线观看-爱奇艺` → `狂飙`），并强化无效标题过滤（含 404/页面不存在/找不到 一律丢弃）
+- 真实链接实测（PHP 命令行与 Web 入口 getVideo.php 双通道）：
+  - 腾讯 `v.qq.com/x/cover/mzc00200803dr6b.html` → 兰香如故（47 集）
+  - 爱奇艺 `iqiyi.com/v_xkt6z3z798.html` / `v_1nvdvo4f38k.html` → 狂飙（39/38 集）
+  - 爱奇艺专辑 `iqiyi.com/a_1fkgtbddd2x.html` → 狂飙（清洗规则生效前误判，现已修正）
+  - 哔哩哔哩 `BV1GJ411x7h7` / `b23.tv/BV1GJ411x7h7` → 多清晰度 mp4 正常
+  - 输出 m3u8 经二次校验：HTTP 200 + `application/vnd.apple.mpegurl`，为合法 HLS 列表，真实可播
+- 已知限制：腾讯新版封面页为 Vue SPA，HTML 无标题/描述（仅通用 `腾讯视频`），且 `s.video.qq.com` 对本机 IP 直接拒绝 TLS；此类链接请追加 `&name=片名`
 
 ### v.0.0.4 (2026-10-11)
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * M1907 云加速解析器  v.0.0.2 (项目 v.0.0.4)
+ * M1907 云加速解析器  v.0.0.3 (项目 v.0.0.5)
  * ====================================
  * 对接站点: im1907.top / m1907.top / hi1907.top / z1.m1907.cn
  * 加速节点: *.cloud.nnpp.vip:2223
@@ -179,6 +179,13 @@ class M1907
         $title = str_replace(array("\r", "\n", "\t"), '', $title);
         $title = preg_replace('/\s+/u', ' ', trim($title));
 
+        // CN 站点标题常为 "片名-类型-描述-站点"; 取首个分隔符前的主体作为片名
+        // (如 "狂飙-电视剧-全集高清正版视频在线观看-爱奇艺" -> "狂飙")
+        if (preg_match('/^\s*([^-_|]{2,30})\s*[-_|]/u', $title, $m)) {
+            $cand = trim($m[1]);
+            if (preg_match_all('/./u', $cand, $mm0) >= 2) $title = $cand;
+        }
+
         // 站点品牌后缀: 名称分隔符 + 站点名 + 广告词
         $brandTokens = array('腾讯视频', '爱奇艺', '优酷', '芒果TV', '芒果tv', '搜狐视频', '搜狐',
             '高清在线观看', '高清全集在线观看', '高清', '全集在线观看', '在线观看',
@@ -195,10 +202,15 @@ class M1907
 
         // 无效标题(品牌名 / 报错页)直接丢弃, 避免拿垃圾关键词去搜
         if ($title === '') return '';
-        $badExact = array('腾讯视频', '爱奇艺', '优酷', '芒果TV', '芒果tv', '搜狐视频', '搜狐', '404', '您查找的页面不存在');
+        $badExact = array('腾讯视频', '爱奇艺', '优酷', '芒果TV', '芒果tv', '搜狐视频', '搜狐',
+            '腾讯', '土豆', '乐视', '404', '您查找的页面不存在');
         if (in_array($title, $badExact, true)) return '';
-        // 至少 2 个非空白字符才认为有效
-        if (mb_strlen(trim($title), 'UTF-8') < 2) return '';
+        if (strpos($title, '404') !== false) return '';
+        if (strpos($title, '页面不存在') !== false || strpos($title, '页面走丢') !== false
+            || strpos($title, '找不到') !== false) return '';
+        // 至少 2 个字符才认为有效(不依赖 mbstring 扩展)
+        $title = trim($title);
+        if (preg_match_all('/./u', $title, $mm) < 2) return '';
         return $title;
     }
 
