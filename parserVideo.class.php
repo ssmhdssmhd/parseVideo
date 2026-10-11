@@ -11,7 +11,7 @@ spl_autoload_register();
 
 class ParserVideo
 {
-    const CHECK_URL_VALID = "/(youku\.com|tudou\.com|ku6\.com|56\.com|letv\.com|video\.sina\.com\.cn|(my\.)?tv\.sohu\.com|v\.qq\.com|vod\.kankan\.com|mtime\.com|pps\.tv|pptv\.com|iqiyi\.com|tv189\.com|hunantv\.com|(bilibili\.com)|(b23\.tv))/";
+    const CHECK_URL_VALID = "/(youku\.com|tudou\.com|ku6\.com|56\.com|letv\.com|video\.sina\.com\.cn|((my|m)\.)?tv\.sohu\.com|v\.qq\.com|vod\.kankan\.com|mtime\.com|pps\.tv|pptv\.com|iqiyi\.com|tv189\.com|hunantv\.com|mgtv\.com|bilibili\.com|b23\.tv)/";
 
     /**
      * parse 
@@ -45,8 +45,8 @@ class ParserVideo
                 $data = self::_parseSina($url);
                 break;
             case 'my.tv.sohu.com':
+            case 'm.tv.sohu.com':
             case 'tv.sohu.com':
-            case 'sohu.com':
                 $data = self::_parseSohu($url);
                 break;
             case 'v.qq.com':
@@ -71,6 +71,7 @@ class ParserVideo
                 $data = self::_parseTv189($url);
                 break;
             case  "hunantv.com":
+            case  "mgtv.com":
                 $data = self::_parseHunantv($url);
                 break;
             case 'bilibili.com':
