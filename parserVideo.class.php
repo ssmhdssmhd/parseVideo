@@ -11,7 +11,7 @@ spl_autoload_register();
 
 class ParserVideo
 {
-    const CHECK_URL_VALID = "/(youku\.com|tudou\.com|ku6\.com|56\.com|letv\.com|video\.sina\.com\.cn|((my|m)\.)?tv\.sohu\.com|v\.qq\.com|vod\.kankan\.com|mtime\.com|pps\.tv|pptv\.com|iqiyi\.com|tv189\.com|hunantv\.com|mgtv\.com|bilibili\.com|b23\.tv)/";
+    const CHECK_URL_VALID = "/(youku\.com|tudou\.com|ku6\.com|56\.com|letv\.com|video\.sina\.com\.cn|((my|m)\.)?tv\.sohu\.com|v\.qq\.com|vod\.kankan\.com|mtime\.com|pps\.tv|pptv\.com|iqiyi\.com|tv189\.com|hunantv\.com|mgtv\.com|bilibili\.com|b23\.tv|im1907\.top|m1907\.top|hi1907\.top|z1\.m1907\.cn)/";
 
     /**
      * parse 
@@ -23,7 +23,12 @@ class ParserVideo
     static public function parse($url=''){
         $lowerurl = strtolower($url);
         preg_match(self::CHECK_URL_VALID, $lowerurl, $matches);
-        if(!$matches) return self::getFlvcdUrl($url);
+        if(!$matches){
+            // 直链(m3u8/mp4)优先交由 M1907 处理
+            $direct = M1907::parse($url);
+            if ($direct !== false) return $direct;
+            return self::getFlvcdUrl($url);
+        }
 
         switch($matches[1]){
             case 'youku.com':
@@ -77,6 +82,12 @@ class ParserVideo
             case 'bilibili.com':
             case 'b23.tv':
                 $data = self::_parseBilibili($url);
+                break;
+            case 'im1907.top':
+            case 'm1907.top':
+            case 'hi1907.top':
+            case 'z1.m1907.cn':
+                $data = self::_parseM1907($url);
                 break;
             default:
                 $data = false;
@@ -241,6 +252,15 @@ class ParserVideo
      */
     static private function _parseBilibili($url){
         $data = Bilibili::parse($url);
+        return $data;
+    }
+    /**
+     * [_parseM1907 解析 M1907 云加速视频(im1907.top/m1907.top/hi1907.top)]
+     * @param  [type] $url [description]
+     * @return [type]      [description]
+     */
+    static private function _parseM1907($url){
+        $data = M1907::parse($url);
         return $data;
     }
     /**
