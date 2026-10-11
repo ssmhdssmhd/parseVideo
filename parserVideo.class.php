@@ -92,6 +92,12 @@ class ParserVideo
             default:
                 $data = false;
         }
+
+        // 专门的站点解析器失败时, 回退到 M1907 云加速(含官方站点片名关键词搜索)
+        if (empty($data)) {
+            $data = self::_parseM1907($url);
+        }
+
         return $data;
     }
 
