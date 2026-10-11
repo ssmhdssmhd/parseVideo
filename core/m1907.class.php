@@ -256,6 +256,8 @@ class M1907
      */
     private static function decrypt($data)
     {
+        // 密文长度须大于 IV(12) + TAG(16); 过短说明是非加密错误响应, 直接判失败
+        if (!is_string($data) || strlen($data) < 29) return null;
         $key = hash('sha256', self::AES_KEY_SOURCE, true);
         $iv  = substr($data, 0, 12);
         $tag = substr($data, -16);
